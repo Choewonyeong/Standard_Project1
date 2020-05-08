@@ -27,10 +27,7 @@ class TabExtract(QWidget):
         self.__canvasGraph__()
         self.__setTab__()
         self.__layout__()
-        try:
-            self.__drawCanvas__()
-        except Exception as e:
-            print(e)
+        self.__drawCanvas__()
 
     def __button__(self):
         self.btnTexts = ["추출내역 확인", "추출내역 닫기"]

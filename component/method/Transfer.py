@@ -16,7 +16,6 @@ def TransferCntLoop(cntLoop, caution):
 def TransferPrice(price, caution):
     price = price.replace(',', '')
     try:
-        cntLoop = int(price)
         return price
     except:
         if price == '':

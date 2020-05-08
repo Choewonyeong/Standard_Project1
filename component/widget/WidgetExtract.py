@@ -60,7 +60,7 @@ class WidgetExtract(QWidget):
                    cntTotal]
         self.runCount += 1
         tabCount = self.tab.count()
-        self.tab.addTab(TabExtract(options), f"{self.runCount}회차")
+        self.tab.addTab(TabExtract(options), f"실행-{self.runCount}회차")
         self.tab.setCurrentIndex(tabCount)
 
     def btnSaveClick(self):
