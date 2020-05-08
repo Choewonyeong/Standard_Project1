@@ -19,8 +19,6 @@ class RunExtract:
         self.cntMinus = options[7]
         self.rangeGap = options[8]
         self.cntTotal = options[9]
-        for option in options:
-            print(option)
 
     # 실행시간 : 3.5초
     def ReturnExtract(self):

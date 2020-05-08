@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
+from pandas import ExcelWriter
+
 from component.method import Transfer as Tran
 from component.tab.TabExtract import TabExtract
 
@@ -24,10 +26,11 @@ class WidgetExtract(QWidget):
     def __button__(self):
         btnRun = QPushButton('실행')
         btnRun.clicked.connect(self.btnRunClick)
-        Save = QPushButton('엑셀로 저장')
+        btnSave = QPushButton('엑셀로 저장')
+        btnSave.clicked.connect(self.btnSaveClick)
         self.layoutBtnTop = QHBoxLayout()
         self.layoutBtnTop.addWidget(btnRun)
-        self.layoutBtnTop.addWidget(Save)
+        self.layoutBtnTop.addWidget(btnSave)
         btnReset = QPushButton('초기화')
         btnApply = QPushButton('적용')
         self.layoutBtnBottom = QHBoxLayout()
@@ -35,32 +38,42 @@ class WidgetExtract(QWidget):
         self.layoutBtnBottom.addWidget(btnApply)
 
     def btnRunClick(self):
-        try:
-            cntLoop = Tran.TransferCntLoop(self.lineEditCntLoop.text(), self.cautionCntLoop)
-            price = Tran.TransferPrice(self.lineEditPrice.text(), self.cautionPrice)
-            ratePlus = Tran.TransferRatePlus(self.lineEditRatePlus.text(), self.cautionRatePlus)/100
-            rangePlus = int(int(price)+int(price)*float(ratePlus))
-            cntPlus = Tran.TransferCntPlus(self.lineEditCntPlus.text(), self.cautionCntPlus)
-            rateMinus = Tran.TransferRateMinus(self.lineEditRateMinus.text(), self.cautionRateMinus)/100
-            rangeMinus = int(int(price)-int(price)*float(rateMinus))
-            cntMinus = Tran.TransferCntMinus(self.lineEditCntMinus.text(), self.cautionCntMinus)
-            rangeGap = float(self.cbxRangeGap.currentText())
-            cntTotal = Tran.TransferCntTotal(self.lineEditCntTotal.text(), self.cautionCntTotal)
-            options = [cntLoop,
-                       price,
-                       ratePlus,
-                       rangePlus,
-                       cntPlus,
-                       rateMinus,
-                       rangeMinus,
-                       cntMinus,
-                       rangeGap,
-                       cntTotal]
-            self.runCount += 1
-            self.tab.addTab(TabExtract(options), f"{self.runCount}회차")
-            self.tab.setCurrentIndex(self.runCount)
-        except Exception as e:
-            print(e)
+        cntLoop = Tran.TransferCntLoop(self.lineEditCntLoop.text(), self.cautionCntLoop)
+        price = Tran.TransferPrice(self.lineEditPrice.text(), self.cautionPrice)
+        ratePlus = Tran.TransferRatePlus(self.lineEditRatePlus.text(), self.cautionRatePlus)/100
+        rangePlus = int(int(price)+int(price)*float(ratePlus))
+        cntPlus = Tran.TransferCntPlus(self.lineEditCntPlus.text(), self.cautionCntPlus)
+        rateMinus = Tran.TransferRateMinus(self.lineEditRateMinus.text(), self.cautionRateMinus)/100
+        rangeMinus = int(int(price)-int(price)*float(rateMinus))
+        cntMinus = Tran.TransferCntMinus(self.lineEditCntMinus.text(), self.cautionCntMinus)
+        rangeGap = float(self.cbxRangeGap.currentText())
+        cntTotal = Tran.TransferCntTotal(self.lineEditCntTotal.text(), self.cautionCntTotal)
+        options = [cntLoop,
+                   price,
+                   ratePlus,
+                   rangePlus,
+                   cntPlus,
+                   rateMinus,
+                   rangeMinus,
+                   cntMinus,
+                   rangeGap,
+                   cntTotal]
+        self.runCount += 1
+        tabCount = self.tab.count()
+        self.tab.addTab(TabExtract(options), f"{self.runCount}회차")
+        self.tab.setCurrentIndex(tabCount)
+
+    def btnSaveClick(self):
+        dig = QFileDialog(self)
+        filePath = dig.getSaveFileName(caption="엑셀로 저장", directory='', filter='*.xlsx')[0]
+        if filePath != '':
+            with ExcelWriter(filePath) as writer:
+                currentTab = self.tab.currentWidget()
+                dfResult = currentTab.dfResult
+                dfResult.to_excel(writer, sheet_name="분석 내역", index=False)
+                dfExtract = currentTab.dfExtract
+                dfExtract.to_excel(writer, sheet_name="추출 내역", index=False)
+            writer.close()
 
     def __label__(self):
         self.cautionCntLoop = QLabel()
@@ -117,9 +130,10 @@ class WidgetExtract(QWidget):
         self.lineEditCntTotal.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
     def __comboBox__(self):
-        rangeGaps = [str(i/10000) for i in range(1, 11)]
+        rangeGaps = [str(i/10000) for i in [1, 2, 4, 5]]
         self.cbxRangeGap = QComboBox()
         self.cbxRangeGap.addItems(rangeGaps)
+        self.cbxRangeGap.setCurrentIndex(3)
 
     def formatNumber(self, text):
         try:
