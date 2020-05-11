@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from PyQt5.QtCore import Qt
 
 
-# 화면 출력 시간 33초
 class TableExtract(QTableWidget):
     def __init__(self, columns, df):
         QTableWidget.__init__(self)

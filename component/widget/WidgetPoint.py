@@ -1,5 +1,11 @@
 from PyQt5.QtWidgets import *
 
+# 넘겨받아야할 인자
+"""
+넘겨받아야할 인자
+= 선택한 값의 예정가격 (낙찰률을 100%라고 가정하고, 1%씩 깎으면서, 가격, 신인도 총점
+"""
+
 
 class WidgetAnalysisPoint(QWidget):
     def __init__(self):
