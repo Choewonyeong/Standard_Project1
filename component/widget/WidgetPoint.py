@@ -3,11 +3,18 @@ from PyQt5.QtWidgets import *
 # 넘겨받아야할 인자
 """
 넘겨받아야할 인자
+= 있을 경우, lineEdit 에 값을 넘겨줄 것
+= 없을 경우, pass
+** 가격을 넘겨주는 게 아니라 차이범위를 넘겨줌으로써 하한가, 상한가를 구분해야 함.
 = 선택한 값의 예정가격 (낙찰률을 100%라고 가정하고, 1%씩 깎으면서, 가격, 신인도 총점
 """
 
 
-class WidgetAnalysisPoint(QWidget):
+class WidgetPoint(QWidget):
+
+    itemOption = ['기술용역적격심사']
+    itemCriteria = ['(주)한국수력원자력']
+
     def __init__(self):
         QWidget.__init__(self)
         self.__component__()
@@ -22,38 +29,41 @@ class WidgetAnalysisPoint(QWidget):
     def __button__(self):
         btnRun = QPushButton('실행')
         Save = QPushButton('엑셀로 저장')
-        self.layoutBtnTop = QVBoxLayout()
+        self.layoutBtnTop = QHBoxLayout()
         self.layoutBtnTop.addWidget(btnRun)
         self.layoutBtnTop.addWidget(Save)
-        btnReset = QPushButton('초기화')
-        btnApply = QPushButton('적용')
-        self.layoutBtnBottom = QVBoxLayout()
-        self.layoutBtnBottom.addWidget(btnReset)
-        self.layoutBtnBottom.addWidget(btnApply)
+
+    def __label__(self):
+        self.lblPrice = QLabel()
+
+    def __comboBox__(self):
+        self.cbxOption = QComboBox()
+        self.cbxOption.addItems(self.itemOption)
+        self.cbxCriteria = QComboBox()
+        self.cbxCriteria.addItems(self.itemCriteria)
 
     def __lineEdit__(self):
-        self.lineEditCntLoop = QLineEdit()
         self.lineEditPrice = QLineEdit()
-        self.lineEditRatePlus = QLineEdit()
-        self.lineEditCntPlus = QLineEdit()
-        self.lineEditRateMinus = QLineEdit()
-        self.lineEditCntMinus = QLineEdit()
-        self.lineEditCntTotal = QLineEdit()
+        # 입력 이벤트 연결(원화 단위로)
+        self.lineEditPlusRate = QLineEdit()
+        self.lineEditMinusRate = QLineEdit()
 
     def __groupBox__(self):
-        layout = QFormLayout()
-        layout.addItem(self.layoutBtnTop)
-        layout.addRow(self.lineEditCntLoop)
-        layout.addRow(self.lineEditPrice)
-        layout.addRow(self.lineEditRatePlus)
-        layout.addRow(self.lineEditCntPlus)
-        layout.addRow(self.lineEditRateMinus)
-        layout.addRow(self.lineEditCntMinus)
-        layout.addRow(self.lineEditCntTotal)
-        layout.addItem(self.layoutBtnBottom)
+        layoutSelf = QVBoxLayout()
+        layoutSelf.addWidget(QLabel('예비가격기초금액'))     # 이게 예비가격기초금액을 의미하는지?
+        layoutSelf.addWidget(self.lineEditPrice)
+        layoutSelf.addWidget(QLabel('상한율'))
+        layoutSelf.addWidget(self.lineEditPlusRate)
+        layoutSelf.addWidget(QLabel('하한율'))
+        layoutSelf.addWidget(self.lineEditMinusRate)
+        layout = QVBoxLayout()
+        layout.addLayout(self.layoutBtnTop)
+        layout.addLayout(layoutSelf)
+
+        layout.addWidget(QLabel(''), 10)
         self.groupBox = QGroupBox()
         self.groupBox.setLayout(layout)
-        self.groupBox.setFixedWidth(150)
+        self.groupBox.setFixedWidth(230)
 
     def __tab__(self):
         self.tab = QTabWidget()
