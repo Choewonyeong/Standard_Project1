@@ -38,6 +38,8 @@ class WidgetExtract(QWidget):
         self.layoutBtnBottom.addWidget(btnApply)
 
     def btnRunClick(self):
+        origin = [self.lineEditCntLoop.text(),
+                  self.lineEditPrice.text()]
         cntLoop = Tran.TransferCntLoop(self.lineEditCntLoop.text(), self.cautionCntLoop)
         price = Tran.TransferPrice(self.lineEditPrice.text(), self.cautionPrice)
         ratePlus = Tran.TransferRatePlus(self.lineEditRatePlus.text(), self.cautionRatePlus)/100

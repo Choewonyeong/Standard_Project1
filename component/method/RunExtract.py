@@ -111,7 +111,7 @@ class RunExtract:
         del accumulateRate
 
         dfSource = []
-        columns = ['차이범위', '산술평균가', '범위별수량', '비율', '비율(누적)']
+        columns = ['예가율범위', '산술평균가', '범위별수량', '비율', '비율(누적)']
         for values in zip(listRange,
                           self.priceExtracts,
                           listRangeCount,
