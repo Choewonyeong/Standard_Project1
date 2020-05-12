@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from component.dialog.DialogTableOption import DialogTableOption
 from component.dialog.DialogOther import DialogOther
+from component.method.Score import TranPQScore
 
 
 class WidgetPoint(QWidget):
@@ -13,7 +14,9 @@ class WidgetPoint(QWidget):
     def __init__(self):
         QWidget.__init__(self)
         self.total = 0
-        self.dig = DialogOther()
+        self.priceMain = 0
+        self.priceSub = 0
+        self.dig = DialogOther(self)
         self.__component__()
 
     def __component__(self):
@@ -21,12 +24,14 @@ class WidgetPoint(QWidget):
         self.__lineEditMain__()
         self.__lineEditSelf__()
         self.__groupBoxOther__()
+        self.__groupBoxSetting__()
         self.__groupBox__()
         self.__tab__()
         self.__layout__()
 
     def __button__(self):
         btnRun = QPushButton('실행')
+        btnRun.clicked.connect(self.BtnRunClick)
         Save = QPushButton('엑셀로 저장')
         self.layoutBtnTop = QHBoxLayout()
         self.layoutBtnTop.addWidget(btnRun)
@@ -36,11 +41,14 @@ class WidgetPoint(QWidget):
         self.btnOther = QPushButton('경쟁사 정보\n업체명/기술(PQ)환산/신인도')
         self.btnOther.clicked.connect(self.BtnOtherClick)
 
+    def BtnRunClick(self):
+        pass
+
     def BtnSubPointClick(self):
         dig = DialogTableOption()
         dig.exec_()
         self.total = dig.total
-        self.lineEditSubPoint.setText(str(self.total))
+        self.lineEditPoint.setText(str(self.total))
 
     def BtnOtherClick(self):
         self.dig.exec_()
@@ -86,7 +94,7 @@ class WidgetPoint(QWidget):
         layoutMain.addWidget(self.lineEditPrice)
         layoutMain.addWidget(QLabel('고시금액'))
         layoutMain.addWidget(self.lineEditPriceSub)
-        self.groupBoxMain = QGroupBox('사업 정보 입력')
+        self.groupBoxMain = QGroupBox('사업 정보')
         self.groupBoxMain.setLayout(layoutMain)
 
     def formatPriceMain(self, text):
@@ -95,8 +103,12 @@ class WidgetPoint(QWidget):
             price = int(text.replace(',', ''))
             lineEdit.setText(format(price, ','))
             self.dig.priceMain = price
+            self.priceMain = price
+            self.formatScore(self.lineEditPQ.text())
         except:
             self.dig.priceMain = 0
+            self.priceMain = 0
+            self.formatScore(self.lineEditPQ.text())
             pass
 
     def formatPriceSub(self, text):
@@ -105,39 +117,67 @@ class WidgetPoint(QWidget):
             price = int(text.replace(',', ''))
             lineEdit.setText(format(price, ','))
             self.dig.priceSub = price
+            self.priceSub = price
+            self.formatScore(self.lineEditPQ.text())
         except:
             self.dig.priceSub = 0
+            self.priceSub = 0
+            self.formatScore(self.lineEditPQ.text())
             pass
 
     def __lineEditSelf__(self):
-        self.lineEditPriceSelf = QLineEdit()
-        self.lineEditPlusRate = QLineEdit()
-        self.lineEditMinusRate = QLineEdit()
-        self.lineEditSubPoint = QLineEdit()
-        self.lineEditSubPoint.setEnabled(False)
-        self.lineEditSubPoint.setAlignment(Qt.AlignCenter)
+        self.lineEditPQ = QLineEdit()
+        self.lineEditPQ.textChanged.connect(self.formatScore)
+        self.lineEditPQTran = QLineEdit()
+        self.lineEditPQTran.setEnabled(False)
+        self.lineEditPoint = QLineEdit()
+        self.lineEditPoint.setEnabled(False)
+        self.lineEditPoint.setAlignment(Qt.AlignCenter)
         layoutSubPoint = QHBoxLayout()
         layoutSubPoint.addWidget(self.btnSubPoint)
-        layoutSubPoint.addWidget(self.lineEditSubPoint)
+        layoutSubPoint.addWidget(self.lineEditPoint)
         layoutSelf = QVBoxLayout()
-        layoutSelf.addWidget(QLabel('예정가(추첨)'))
-        layoutSelf.addWidget(self.lineEditPriceSelf)
-        layoutSelf.addWidget(QLabel('예가율(상한율)'))
-        layoutSelf.addWidget(self.lineEditPlusRate)
-        layoutSelf.addWidget(QLabel('예가율(하한율)'))
-        layoutSelf.addWidget(self.lineEditMinusRate)
+        layoutSelf.addWidget(QLabel('기술(PQ)점수'))
+        layoutSelf.addWidget(self.lineEditPQ)
+        layoutSelf.addWidget(QLabel('기술(PQ)점수 환산'))
+        layoutSelf.addWidget(self.lineEditPQTran)
         layoutSelf.addWidget(QLabel('신인도평가점수'))
         layoutSelf.addLayout(layoutSubPoint)
-        self.groupBoxSelf = QGroupBox('우리 회사 정보 입력')
+        self.groupBoxSelf = QGroupBox('우리 회사 정보')
         self.groupBoxSelf.setLayout(layoutSelf)
+
+    def formatScore(self, text):
+        try:
+            score = round(float(text), 3)
+            scoreTran = TranPQScore(self.priceMain, self.priceSub, score)
+            self.lineEditPQTran.setText(str(scoreTran.__format__('.3f')))
+        except:
+            pass
 
     def __groupBoxOther__(self):
         self.listWidget = QListWidget()
         layoutOther = QVBoxLayout()
         layoutOther.addWidget(self.btnOther)
         layoutOther.addWidget(self.listWidget)
-        self.groupBoxOther = QGroupBox('경쟁사 정보 입력')
+        self.groupBoxOther = QGroupBox('경쟁사 정보')
         self.groupBoxOther.setLayout(layoutOther)
+
+    def __groupBoxSetting__(self):
+        self.lineEditRateLimited = QLineEdit() # 낙찰하한율
+        self.lineEditRateDistance = QLineEdit() # 낙찰율 감소범위
+        self.lineEditMaxRate = QLineEdit() # 추첨상한율
+        self.lineEditMinRate = QLineEdit() # 추첨하한율
+        layoutSetting = QVBoxLayout()
+        layoutSetting.addWidget(QLabel('낙찰하한율'))
+        layoutSetting.addWidget(self.lineEditRateLimited)
+        layoutSetting.addWidget(QLabel('낙찰율 감소범위'))
+        layoutSetting.addWidget(self.lineEditRateDistance)
+        layoutSetting.addWidget(QLabel('추첨상한율'))
+        layoutSetting.addWidget(self.lineEditMaxRate)
+        layoutSetting.addWidget(QLabel('추첨하한율'))
+        layoutSetting.addWidget(self.lineEditMinRate)
+        self.groupBoxSetting = QGroupBox('분석 설정')
+        self.groupBoxSetting.setLayout(layoutSetting)
 
     def __groupBox__(self):
         layout = QVBoxLayout()
@@ -145,6 +185,7 @@ class WidgetPoint(QWidget):
         layout.addWidget(self.groupBoxMain)
         layout.addWidget(self.groupBoxSelf)
         layout.addWidget(self.groupBoxOther)
+        layout.addWidget(self.groupBoxSetting)
         layout.addWidget(QLabel(''))
         self.groupBox = QGroupBox()
         self.groupBox.setLayout(layout)

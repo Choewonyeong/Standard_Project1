@@ -4,8 +4,9 @@ from component.method.Score import TranPQScore
 
 
 class DialogOther(QDialog):
-    def __init__(self):
+    def __init__(self, widget):
         QDialog.__init__(self)
+        self.widget = widget
         self.priceMain = 0
         self.priceSub = 0
         self.__setting__()
@@ -80,6 +81,8 @@ class DialogOther(QDialog):
     def formatScore(self, text):
         col = self.tblOther.currentColumn()
         row = self.tblOther.currentRow()
+        self.priceMain = self.widget.priceMain
+        self.priceSub = self.widget.priceSub
         if col == 1:
             try:
                 lineEditPQTran = self.tblOther.cellWidget(row, 2)
