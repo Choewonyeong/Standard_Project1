@@ -1,14 +1,49 @@
 class RunScore:
-    def __init__(self, price, minRate, rate, perRange, PQTran, point):
-        self.price = price # 예정가격
-        self.minRate = minRate # 낙찰 하한률 -> 얘도 금액별 다름
-        self.rate = rate # 추첨률
-        self.perRange = perRange # 낙찰률 감소율
-        self.PQTran = PQTran # 기술 점수
-        self.point = point # 신인도 점수
-        self.result = []
+    score = 0  # 가격점수
+    limit = 0  # 낙찰하한율
+    priceRate = 0 # 낙찰가/예정가
+    rateSelfCapital = 0 # 자기자본비율
+    rateFlowAsset = 0 # 유동비율
 
-    # 낙찰율 감소율, 낙찰가 산출
+    def __init__(self,
+                 price,
+                 priceSub,
+                 PQ,
+                 rateReduce,
+                 point,
+                 rateS=0,       # 기준비율
+                 selfCapital=0, # 자기자본
+                 totalAsset=0,  # 총자산
+                 flowAsset=0,   # 유동자산
+                 flowFan=0):    # 유동부채
+        self.price = price # 에정가격
+        self.priceSub = priceSub # 고시금액
+        self.pointMain = PQ # 기술(PQ)점수 또는 경영점수
+        self.pointSub = point # 신인도점수
+        self.rateReduce = rateReduce
+        self.result = []
+        self.rateS = rateS
+        self.selfCapital = selfCapital
+        self.totalAsset = totalAsset
+        self.flowAsset = flowAsset
+        self.flowFan = flowFan
+
+        # 예정가에 따른 낙찰하한가 산정 및 기술(PQ)점수 환산
+    def __setLimit__(self):
+        if self.price >= 1000000000:
+            self.limit = 0.79995
+            self.PQ = self.PQ*0.7
+        elif self.price >= 500000000:
+            self.limit = 0.85495
+            self.PQ = self.PQ*0.5
+        elif self.price >= self.priceSub:
+            self.limit = 0.86475
+            self.PQ = self.PQ*0.3
+        elif self.price < self.priceSub:
+            self.limit = 0.87745
+            self.PQ = 1
+
+    # 낙찰율 감소율에 따른 낙찰가 산출
     def __perRangesAndPrices__(self):
         self.perRanges = []
         self.prices = []
