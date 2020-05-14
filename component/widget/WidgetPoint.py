@@ -83,6 +83,7 @@ class WidgetPoint(QWidget):
         self.lineEditPrice = QLineEdit()
         self.lineEditPrice.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.lineEditPrice.textEdited.connect(self.formatPriceMain)
+        self.lblPriceSub = QLabel('고시금액')
         self.lineEditPriceSub = QLineEdit()
         self.lineEditPriceSub.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.lineEditPriceSub.textEdited.connect(self.formatPriceSub)
@@ -92,7 +93,7 @@ class WidgetPoint(QWidget):
         layoutMain.addWidget(self.lineEditTitle)
         layoutMain.addWidget(QLabel('기초가격'))
         layoutMain.addWidget(self.lineEditPrice)
-        layoutMain.addWidget(QLabel('고시금액'))
+        layoutMain.addWidget(self.lblPriceSub)
         layoutMain.addWidget(self.lineEditPriceSub)
         self.groupBoxMain = QGroupBox('사업 정보')
         self.groupBoxMain.setLayout(layoutMain)
@@ -101,6 +102,17 @@ class WidgetPoint(QWidget):
         try:
             lineEdit = self.sender()
             price = int(text.replace(',', ''))
+            priceSub = int(text.replace(',', ''))
+            if price >= 1000000000:
+                self.lblPriceSub.setVisible(False)
+                self.lineEditPriceSub.setVisible(False)
+            elif price < priceSub:
+                # 경영상태점수 인자값 입력
+                self.lblPriceSub.setVisible(True)
+                self.lineEditPriceSub.setVisible(True)
+            else:
+                self.lblPriceSub.setVisible(True)
+                self.lineEditPriceSub.setVisible(True)
             lineEdit.setText(format(price, ','))
             self.dig.priceMain = price
             self.priceMain = price
@@ -163,14 +175,11 @@ class WidgetPoint(QWidget):
         self.groupBoxOther.setLayout(layoutOther)
 
     def __groupBoxSetting__(self):
-        self.lineEditRateLimited = QLineEdit() # 낙찰하한율
-        self.lineEditRateDistance = QLineEdit() # 낙찰율 감소범위
+        self.lineEditRateDistance = QLineEdit() # 낙찰율 범위값(%)
         self.lineEditMaxRate = QLineEdit() # 추첨상한율
         self.lineEditMinRate = QLineEdit() # 추첨하한율
         layoutSetting = QVBoxLayout()
-        layoutSetting.addWidget(QLabel('낙찰하한율'))
-        layoutSetting.addWidget(self.lineEditRateLimited)
-        layoutSetting.addWidget(QLabel('낙찰율 감소범위'))
+        layoutSetting.addWidget(QLabel('낙찰율 범위값(%)'))
         layoutSetting.addWidget(self.lineEditRateDistance)
         layoutSetting.addWidget(QLabel('추첨상한율'))
         layoutSetting.addWidget(self.lineEditMaxRate)

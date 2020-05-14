@@ -21,7 +21,7 @@ class RunScoreCaseOne:
             if currentRate <= self.limit:
                 break
             else:
-                self.perRanges.append(f"{round(currentRate*100, 3).__format__('.3f')}%")
+                self.perRanges.append(f"{round(currentRate*100, 3).__format__('.1f')}%")
                 price = self.price*currentRate
                 self.perPrices.append(format(int(price), ','))
             currentRate -= self.rateReduce
@@ -42,8 +42,9 @@ class RunScoreCaseOne:
         for price in self.perPrices:
             price = int(price.replace(',', ''))
             score = returnScore(price) if returnScore(price) > 2 else 2
+            total = score + self.PQ + self.point
             self.priceScores.append(score.__format__('.2f'))
-            self.totalScores.append(score + self.PQ + self.point)
+            self.totalScores.append(total.__format__('.2f'))
 
     def ReturnToDataFrame(self):
         df = DataFrame(data=self.perRanges, columns=['낙찰률'])

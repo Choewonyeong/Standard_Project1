@@ -5,7 +5,7 @@ from component.dialog.DialogAdminUser import DialogAdminUser
 from component.dialog.DialogSignUpList import DialogSignUpList
 from component.widget.WidgetSetup import WidgetSetup
 from component.widget.WidgetExtract import WidgetExtract
-from component.widget.WidgetPoint import WidgetPoint
+from component.widget.WidgetScore import WidgetScore
 
 
 class Windows(QWidget):
@@ -49,7 +49,7 @@ class Windows(QWidget):
                 self.tab.addTab(WidgetExtract(), text)
                 self.currentTabs.append(text)
             elif text == self.mainItems[1]:
-                self.tab.addTab(WidgetPoint(), text)
+                self.tab.addTab(WidgetScore(), text)
                 self.currentTabs.append(text)
             elif text == self.mainItems[2]:
                 self.tab.addTab(WidgetSetup(self.userId, self.author), text)
