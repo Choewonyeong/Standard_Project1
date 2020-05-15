@@ -94,7 +94,9 @@ class RunExtract:
         del categoryCount
         listRangeCount = dfCounts.iloc[:, 0].to_list()
         del dfCounts
-
+        priceRange = [int(self.price+self.price*rate) for rate in listRange]
+        priceRange = [f"{format(priceLow, ',')} ~ {format(priceHigh, ',')}"
+                      for (priceLow, priceHigh) in zip(priceRange[:-1], priceRange[1:])]
         listRange = [f"{minus.__format__('.4f')} ~ {plus.__format__('.4f')}"
                      for (minus, plus) in zip(listRange[:-1], listRange[1:])]
 
@@ -111,9 +113,9 @@ class RunExtract:
         del accumulateRate
 
         dfSource = []
-        columns = ['예가율범위', '산술평균가', '범위별수량', '비율', '비율(누적)']
+        columns = ['예가율범위', '예비가격범위', '범위별수량', '비율', '비율(누적)']
         for values in zip(listRange,
-                          self.priceExtracts,
+                          priceRange,
                           listRangeCount,
                           countsRates,
                           accumulateRates):

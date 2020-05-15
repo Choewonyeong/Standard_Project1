@@ -1,8 +1,5 @@
 from PyQt5.QtWidgets import *
 from setting.Connector import connector
-from component.dialog.DialogUserSelf import DialogUserSelf
-from component.dialog.DialogAdminUser import DialogAdminUser
-from component.dialog.DialogSignUpList import DialogSignUpList
 from component.widget.WidgetSetup import WidgetSetup
 from component.widget.WidgetExtract import WidgetExtract
 from component.widget.WidgetScore import WidgetScore
@@ -20,7 +17,7 @@ class Windows(QWidget):
 
     def __setting__(self):
         self.showMaximized()
-        self.setWindowTitle('입찰가 및 적격심사점수 분석 프로그램 - (주)스탠더드시험연구소')
+        self.setWindowTitle('입찰가동향 및 적격심사점수 분석 프로그램 - (주)스탠더드시험연구소')
 
     def __variables__(self):
         self.currentTabs = []
@@ -31,7 +28,7 @@ class Windows(QWidget):
         self.__layout__()
 
     def __mainList__(self):
-        self.mainItems = ['입찰가분석',
+        self.mainItems = ['입찰가동향분석',
                           '적격심사분석',
                           '설정']
         self.mainList = QListWidget()
@@ -40,23 +37,20 @@ class Windows(QWidget):
         self.mainList.itemClicked.connect(self.mainListItemClick)
 
     def mainListItemClick(self, item):
-        try:
-            text = item.text()
-            tabCounts = self.tab.count()
-            if text in self.currentTabs:
-                self.tab.setCurrentIndex(self.currentTabs.index(text))
-            elif text == self.mainItems[0]:
-                self.tab.addTab(WidgetExtract(), text)
-                self.currentTabs.append(text)
-            elif text == self.mainItems[1]:
-                self.tab.addTab(WidgetScore(), text)
-                self.currentTabs.append(text)
-            elif text == self.mainItems[2]:
-                self.tab.addTab(WidgetSetup(self.userId, self.author), text)
-                self.currentTabs.append(text)
-            self.tab.setCurrentIndex(tabCounts)
-        except Exception as e:
-            print(e)
+        text = item.text()
+        tabCounts = self.tab.count()
+        if text in self.currentTabs:
+            self.tab.setCurrentIndex(self.currentTabs.index(text))
+        elif text == self.mainItems[0]:
+            self.tab.addTab(WidgetExtract(), text)
+            self.currentTabs.append(text)
+        elif text == self.mainItems[1]:
+            self.tab.addTab(WidgetScore(), text)
+            self.currentTabs.append(text)
+        elif text == self.mainItems[2]:
+            self.tab.addTab(WidgetSetup(self.userId, self.author), text)
+            self.currentTabs.append(text)
+        self.tab.setCurrentIndex(tabCounts)
 
     def __tab__(self):
         self.tab = QTabWidget()

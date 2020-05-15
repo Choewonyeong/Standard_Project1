@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
-from component.table.TableScore import TableScore
 
 
 class WidgetTables(QWidget):

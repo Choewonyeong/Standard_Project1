@@ -55,18 +55,6 @@ class DialogOtherManagement(QDialog):
             self.otherInfo.append(info)
         self.close()
 
-    def BtnApplyClick(self):
-        self.otherInfo.clear()
-        for row in range(self.tblOther.rowCount()-1, -1, -1):
-            name = self.tblOther.cellWidget(row, 0).text()
-            if name == '':
-                self.tblOther.removeRow(row)
-        for row in range(self.tblOther.rowCount()):
-            info = []
-            for col in range(self.tblOther.columnCount()-1):
-                info.append(self.tblOther.cellWidget(row, col).text())
-            self.otherInfo.append(info)
-
     def BtnAddClick(self):
         rowCount = self.tblOther.rowCount()
         self.tblOther.insertRow(rowCount)

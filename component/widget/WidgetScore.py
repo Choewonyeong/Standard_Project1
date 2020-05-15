@@ -4,13 +4,11 @@ from component.widget.GroupBoxOur import GroupBoxOur
 from component.widget.GroupBoxOtherPQ import GroupBoxOtherPQ
 from component.widget.GroupBoxOtherManagement import GroupBoxOtherManagement
 from component.dialog.DialogTableOption import DialogTableOption
-from component.method.RunScoreCaseOne import RunScoreCaseOne
-from component.method.RunScoreCaseTwo import RunScoreCaseTwo
-from component.method.RunScoreCaseThree import RunScoreCaseThree
-from component.method.RunScoreCaseFour import RunScoreCaseFour
 from component.tab.TabScore import TabScore
-from component.widget.WidgetTables import WidgetTables
 from component.method.CreateDataFrame import CreateScoreCaseOne
+from component.method.CreateDataFrame import CreateScoreCaseTwo
+from component.method.CreateDataFrame import CreateScoreCaseThree
+from component.method.CreateDataFrame import CreateScoreCaseFour
 from pandas import ExcelWriter
 
 
@@ -61,15 +59,23 @@ class WidgetScore(QWidget):
                                                        self.PQ, self.rateReduce, self.point, otherInfo)
                 self.tab.addTab(TabScore(names, dataFrames, '기술점수'), self.title)
             elif self.priceMain >= 500000000:
-                run = RunScoreCaseTwo(self.priceMain, self.PQ, self.rateReduce, self.point)
-                df = run.ReturnToDataFrame()
+                otherInfo = self.objectGroupBox[2].otherInfo
+                names, dataFrames = CreateScoreCaseTwo(self.priceMain, self.priceHigh, self.priceLow,
+                                                       self.PQ, self.rateReduce, self.point, otherInfo)
+                self.tab.addTab(TabScore(names, dataFrames, '기술점수'), self.title)
             elif self.priceMain >= self.priceSub:
-                run = RunScoreCaseThree(self.priceMain, self.PQ, self.rateReduce, self.poin)
-                df = run.ReturnToDataFrame()
+                otherInfo = self.objectGroupBox[2].otherInfo
+                names, dataFrames = CreateScoreCaseThree(self.priceMain, self.priceHigh, self.priceLow,
+                                                         self.PQ, self.rateReduce, self.point, otherInfo)
+                self.tab.addTab(TabScore(names, dataFrames, '기술점수'), self.title)
+            # 이 부분 뭔가 안맞음
             elif self.priceMain < self.priceSub:
-                run = RunScoreCaseFour(self.priceMain, self.rateStd, self.capital, self.asset,
-                                       self.flowAsset, self.flowFan, self.rateReduce, self.point)
-                df = run.ReturnToDataFrame()
+                otherInfo = self.objectGroupBox[2].otherInfo
+                names, dataFrames = CreateScoreCaseFour(self.priceMain, self.priceHigh, self.priceLow,
+                                                        self.rateStd, self.capital, self.asset,
+                                                        self.flowAsset, self.flowFan,
+                                                        self.rateReduce, self.point, otherInfo)
+                self.tab.addTab(TabScore(names, dataFrames, '경영점수'), self.title)
         except Exception as e:
             print(e)
 
