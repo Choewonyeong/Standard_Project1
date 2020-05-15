@@ -68,7 +68,7 @@ class RunScoreCaseFour:
             score = returnScore(price) if returnScore(price) > 2 else 2
             total = score + self.managementScore + self.point
             self.priceScores.append(score.__format__('.2f'))
-            self.priceScores.append(total.__format__('.2f'))
+            self.priceScores.append(total.__format__('.3f'))
 
     def ReturnToDataFrame(self):
         df = DataFrame(data=self.perRanges, columns=['낙찰률'])

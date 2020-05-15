@@ -8,8 +8,10 @@ from component.method.RunScoreCaseOne import RunScoreCaseOne
 from component.method.RunScoreCaseTwo import RunScoreCaseTwo
 from component.method.RunScoreCaseThree import RunScoreCaseThree
 from component.method.RunScoreCaseFour import RunScoreCaseFour
-from component.table.TableScore import TableScore
+from component.tab.TabScore import TabScore
 from component.widget.WidgetTables import WidgetTables
+from component.method.CreateDataFrame import CreateScoreCaseOne
+from pandas import ExcelWriter
 
 
 class WidgetScore(QWidget):
@@ -19,7 +21,7 @@ class WidgetScore(QWidget):
         self.__component__()
 
     def __variables__(self):
-        self.name = ''
+        self.title = ''
         self.priceMain = 0
         self.priceSub = 100000000   # 건축사법에 따른 설계는 5억원미만 1억원이상
         self.rateReduce = 0.001      # 1%
@@ -53,22 +55,11 @@ class WidgetScore(QWidget):
 
     def RunAnalysis(self):
         try:
-            nameTable = []
-            objectTable = []
             if self.priceMain >= 1000000000:
-                run = RunScoreCaseOne(self.priceMain, self.PQ, self.rateReduce, self.point)
-                dfSelf = run.ReturnToDataFrame()
-                nameTable.append('(주)스탠더드시험연구소')
-                objectTable.append(TableScore(dfSelf, "기술점수"))
-                for otherInfo in self.objectGroupBox[2].otherInfo:
-                    try:
-                        run = RunScoreCaseOne(self.priceMain, otherInfo[1], otherInfo[2], otherInfo[3])
-                        dfObject = run.ReturnToDataFrame()
-                        nameTable.append(otherInfo[0])
-                        objectTable.append(TableScore(dfObject, "기술점수"))
-                    except:
-                        pass
-                self.tab.addTab(WidgetTables(nameTable, objectTable), self.name)
+                otherInfo = self.objectGroupBox[2].otherInfo
+                names, dataFrames = CreateScoreCaseOne(self.priceMain, self.priceHigh, self.priceLow,
+                                                       self.PQ, self.rateReduce, self.point, otherInfo)
+                self.tab.addTab(TabScore(names, dataFrames, '기술점수'), self.title)
             elif self.priceMain >= 500000000:
                 run = RunScoreCaseTwo(self.priceMain, self.PQ, self.rateReduce, self.point)
                 df = run.ReturnToDataFrame()
@@ -83,7 +74,22 @@ class WidgetScore(QWidget):
             print(e)
 
     def SaveToExcel(self):
-        pass
+        try:
+            currentWidget = self.tab.currentWidget()
+            dataFrames = currentWidget.dataFrames # [1][3]
+            options = currentWidget.options # [3]
+            names = currentWidget.names # [1]
+
+            dig = QFileDialog(self)
+            filePath = dig.getSaveFileName(caption="엑셀로 저장", directory='', filter='*.xlsx')[0]
+            if filePath:
+                with ExcelWriter(filePath) as writer:
+                    for x, frames in enumerate(dataFrames):
+                        for y, dataFrame in enumerate(frames):
+                            dataFrame.to_excel(writer, sheet_name=f"{names[x]}-{options[y]}", index=False)
+                writer.close()
+        except Exception as e:
+            print(e)
 
     def __default__(self):
         self.objectGroupBox = [GroupBoxBusiness(self),
@@ -115,7 +121,7 @@ class WidgetScore(QWidget):
         self.setLayout(layout)
 
     def __event__(self):
-        self.objectGroupBox[0].objectLineEdit[0].textEdited.connect(self.getName)
+        self.objectGroupBox[0].objectLineEdit[0].textEdited.connect(self.getTitle)
         self.objectGroupBox[0].objectLineEdit[1].textEdited.connect(self.getPriceMain)
         self.objectGroupBox[0].objectLineEdit[2].textEdited.connect(self.getPriceSub)
         self.objectGroupBox[0].objectLineEdit[3].currentTextChanged.connect(self.getRateReduce)
@@ -129,8 +135,8 @@ class WidgetScore(QWidget):
         self.objectGroupBox[1].objectLineEdit[5].textEdited.connect(self.getflowAsset)
         self.objectGroupBox[1].objectLineEdit[6].textEdited.connect(self.getflowFan)
 
-    def getName(self):
-        self.name = self.sender().text()
+    def getTitle(self):
+        self.title = self.sender().text()
 
     def getPriceMain(self):
         lineEdit = self.sender()

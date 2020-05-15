@@ -44,7 +44,7 @@ class RunScoreCaseOne:
             score = returnScore(price) if returnScore(price) > 2 else 2
             total = score + self.PQ + self.point
             self.priceScores.append(score.__format__('.2f'))
-            self.totalScores.append(total.__format__('.2f'))
+            self.totalScores.append(total.__format__('.3f'))
 
     def ReturnToDataFrame(self):
         df = DataFrame(data=self.perRanges, columns=['낙찰률'])
@@ -54,10 +54,3 @@ class RunScoreCaseOne:
         df['신인도점수'] = self.point.__format__('.1f')
         df['총점'] = self.totalScores
         return df
-
-try:
-    r = RunScoreCaseOne(1926124200, 95.630, 0.00001, 1)
-    df = r.ReturnToDataFrame()
-    print(df)
-except Exception as e:
-    print(e)

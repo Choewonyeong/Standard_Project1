@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from pandas import ExcelWriter
 
-from component.method import Transfer as Tran
+from component.method import TransferExtractValue as Tran
 from component.tab.TabExtract import TabExtract
 
 
