@@ -17,6 +17,9 @@ if __name__ == "__main__":
     loading.finish(login)
     app.exec_()
     if login.userId in userIds:
-        windows = Windows(login.userId, login.author)
-        windows.show()
-        app.exec_()
+        try:
+            windows = Windows(login.userId, login.author)
+            windows.show()
+            app.exec_()
+        except:
+            app.quit()

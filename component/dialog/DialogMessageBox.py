@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtCore import Qt
+from design import Style
 
 
 class DialogMessageBox(QDialog):
@@ -22,7 +23,7 @@ class DialogMessageBox(QDialog):
 
     def __setting__(self):
         self.setWindowFlag(Qt.FramelessWindowHint)
-        # self.setStyleSheet(Style.Message_Dialog)
+        self.setStyleSheet(Style.Dialog_Massage)
         self.setFixedWidth(350)
 
     def __label__(self):

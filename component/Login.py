@@ -4,17 +4,19 @@ from PyQt5.QtGui import QPixmap
 from setting import Path
 from setting.Connector import connector
 from component.dialog.DialogSignUp import DialogSignUp
+from design import Style
 
 
-class Login(QWidget):
+class Login(QDialog):
     def __init__(self):
-        QWidget.__init__(self)
+        QDialog.__init__(self)
         self.connUser = connector[0]
         self.__setting__()
         self.__variables__()
         self.__component__()
 
     def __setting__(self):
+        self.setStyleSheet(Style.Dialog_Login)
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setFixedHeight(600)
         self.setFixedWidth(400)
@@ -41,6 +43,9 @@ class Login(QWidget):
         self.cautionUserId = QLabel()
         self.cautionPassword = QLabel()
         self.cautionAccount = QLabel()
+        self.cautionUserId.setStyleSheet(Style.Label_Caution)
+        self.cautionPassword.setStyleSheet(Style.Label_Caution)
+        self.cautionAccount.setStyleSheet(Style.Label_Caution)
         self.cautionUserId.setAlignment(Qt.AlignCenter)
         self.cautionPassword.setAlignment(Qt.AlignCenter)
         self.cautionAccount.setAlignment(Qt.AlignCenter)
@@ -72,14 +77,20 @@ class Login(QWidget):
     def __buttons__(self):
         btnClose = QPushButton()
         btnClose.setText('종료')
+        btnClose.setStyleSheet(Style.PushButton_Close)
+        btnClose.setCursor(Qt.PointingHandCursor)
         btnClose.clicked.connect(self.btnCloseClick)
         btnLogin = QPushButton()
         btnLogin.setText('로그인')
+        btnLogin.setStyleSheet(Style.PushButton_Accept)
+        btnLogin.setCursor(Qt.PointingHandCursor)
         btnLogin.clicked.connect(self.btnLoginClick)
         btnLogin.setDefault(True)
         btnLogin.setShortcut('Return')
         self.btnSignup = QPushButton()
         self.btnSignup.setText('회원가입')
+        self.btnSignup.setStyleSheet(Style.PushButton_SignUp)
+        self.btnSignup.setCursor(Qt.PointingHandCursor)
         self.btnSignup.clicked.connect(self.btnSignupClick)
         self.layoutBtn = QHBoxLayout()
         self.layoutBtn.addWidget(btnClose)
@@ -119,23 +130,23 @@ class Login(QWidget):
         dig.exec_()
 
     def __layout__(self):
-        layoutHorizontalCenter = QFormLayout()
+        layoutHorizontalCenter = QVBoxLayout()
         layoutHorizontalCenter.addWidget(self.img)
-        layoutHorizontalCenter.addRow('', self.inputUserId)
-        layoutHorizontalCenter.addRow('', self.cautionUserId)
-        layoutHorizontalCenter.addRow('', self.inputPassword)
-        layoutHorizontalCenter.addRow('', self.cautionPassword)
-        layoutHorizontalCenter.addItem(self.layoutBtn)
-        layoutHorizontalCenter.addRow('', self.cautionAccount)
-        layoutHorizontalCenter.addRow('', self.btnSignup)
+        layoutHorizontalCenter.addWidget(self.inputUserId)
+        layoutHorizontalCenter.addWidget(self.cautionUserId)
+        layoutHorizontalCenter.addWidget(self.inputPassword)
+        layoutHorizontalCenter.addWidget(self.cautionPassword)
+        layoutHorizontalCenter.addLayout(self.layoutBtn)
+        layoutHorizontalCenter.addWidget(self.cautionAccount)
+        layoutHorizontalCenter.addWidget(self.btnSignup)
         layoutHorizon = QHBoxLayout()
         layoutHorizon.addWidget(QLabel(), 3)
         layoutHorizon.addLayout(layoutHorizontalCenter, 0)
         layoutHorizon.addWidget(QLabel(), 3)
         layoutVertical = QVBoxLayout()
-        layoutVertical.addWidget(QLabel(), 3)
+        layoutVertical.addWidget(QLabel(), 1)
         layoutVertical.addLayout(layoutHorizon, 3)
-        layoutVertical.addWidget(QLabel(), 3)
+        layoutVertical.addWidget(QLabel(), 1)
         layoutVertical.addWidget(self.logo)
-        layoutVertical.addWidget(QLabel())
+        layoutVertical.addWidget(QLabel(), 0)
         self.setLayout(layoutVertical)
